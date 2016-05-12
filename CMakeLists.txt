@@ -11,34 +11,29 @@ mark_as_advanced( CMAKE_VERBOSE_MAKEFILE )
 set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH} )
 set( CMAKE_DEBUG_POSTFIX "d" )
 
-string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_CAPITALIZED)
-add_definitions(-DUNICODE)
-
-macro( config_project PROJNAME LIBNAME )
-include_directories( ${${LIBNAME}_INCLUDE_DIR} )
-target_link_libraries( ${PROJNAME} ${${LIBNAME}_LIBRARY} )
-endmacro()
+string( TOUPPER ${PROJECT_NAME} PROJECT_NAME_CAPITALIZED )
+add_definitions( -DUNICODE )
 
 # large address aware option setting
 if( ${MINGW} )
-	set( LARGEADDRESSAWARE "--large-address-aware" )
+    set( LARGEADDRESSAWARE "--large-address-aware" )
 else( ${MINGW} )
-	if ( WIN32 )
-		set( LARGEADDRESSAWARE "/LARGEADDRESSAWARE" )
-	else ( WIN32 )
-		set( LARGEADDRESSAWARE " " )
-	endif ( WIN32 )
+    if ( WIN32 )
+        set( LARGEADDRESSAWARE "/LARGEADDRESSAWARE" )
+    else ( WIN32 )
+        set( LARGEADDRESSAWARE " " )
+    endif ( WIN32 )
 endif( ${MINGW} )
 
 if ( WIN32)
-	SET( APP_OPT "WIN32" )
+    SET( APP_OPT "WIN32" )
 else ( WIN32 )
-	if ( APPLE )
-		#SET( APP_OPT "MACOSX_BUNDLE" )
-		SET( APP_OPT "EXCLUDE_FROM_ALL" )
-	else ( APPLE )
-		SET( APP_OPT " " )
-	endif ( APPLE )
+    if ( APPLE )
+        #SET( APP_OPT "MACOSX_BUNDLE" )
+        SET( APP_OPT "EXCLUDE_FROM_ALL" )
+    else ( APPLE )
+        SET( APP_OPT " " )
+    endif ( APPLE )
 endif ( WIN32 )
 
 # OpenCV 
@@ -70,16 +65,16 @@ link_directories( ${CMAKE_BINARY_DIR}/ )
 
 # Setup output directories
 set( LIBRARY_OUTPUT_PATH 
-	${PROJECT_BINARY_DIR}/bin
-	CACHE
-	PATH
-	"Single directory for all libraries" )
-	
+    ${PROJECT_BINARY_DIR}/bin
+    CACHE
+    PATH
+    "Single directory for all libraries" )
+    
 set( EXECUTABLE_OUTPUT_PATH 
-	${PROJECT_BINARY_DIR}/bin
-	CACHE
-	PATH
-	"Single directory for all executables" )
+    ${PROJECT_BINARY_DIR}/bin
+    CACHE
+    PATH
+    "Single directory for all executables" )
 
 file( GLOB BT_RCS_RAW *.qrc )
 
