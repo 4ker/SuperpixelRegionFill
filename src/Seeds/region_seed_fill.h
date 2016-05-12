@@ -1,4 +1,3 @@
-
 #ifndef REGION_SEED_FILL_H
 #define REGION_SEED_FILL_H
 #pragma once
@@ -15,8 +14,6 @@
 
 using namespace std;
 using namespace cv;
-
-//static int iters = 0;
 
 #define  CONTOUR_LABEl  255
 const int dx4[4]       = {-1, 0, 1, 0};

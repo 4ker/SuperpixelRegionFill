@@ -110,9 +110,9 @@ void labelContourMask(InputArray _labels, OutputArray _contour, bool thick_line)
                 }
             }
             if( neighbors > 1 )
-			{
+            {
                 contour.at<uchar>(j, k) = (uchar)-1;
-			}
+            }
         }
     }
 }

@@ -56,8 +56,6 @@ void RegionSeedFill::seedFill(
 		int& _preLabel, 
 		NeighbourCount nc /* = NEIGHBOUR_4 */)
 {
-//	cout << iters++ << endl;
-
 	if ( _pt.x >= 0 && _pt.x < _labelImg.cols && 
 		 _pt.y >= 0 && _pt.y < _labelImg.rows )
 	{
@@ -139,7 +137,6 @@ void RegionSeedFill::ccaBoundaryFill(
 		_neighbours = 8;
 
 	boundaryFill(_pt, contour, _fillImg, filled, contourLabel, nc);
-
 }
 
 void RegionSeedFill::boundaryFill(

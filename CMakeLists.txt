@@ -1,113 +1,91 @@
-# set project's name
-PROJECT(SeedFill)
+project( SuperpixelRegionFill )
+cmake_minimum_required( VERSION 2.8.3 )
 
-#ADD_DEFINITIONS(-DUNICODE)
-ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
-
-###############################################################################
-# CMake settings
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
-SET(CMAKE_COLOR_MAKEFILE ON)
-SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
+set( CMAKE_COLOR_MAKEFILE ON )
+set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 
 # Allow advanced users to generate Makefiles printing detailed commands
-MARK_AS_ADVANCED(CMAKE_VERBOSE_MAKEFILE)
+mark_as_advanced( CMAKE_VERBOSE_MAKEFILE )
 
 # Path to additional CMake modules
-SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH})
+set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH} )
+set( CMAKE_DEBUG_POSTFIX "d" )
 
-SET(CMAKE_DEBUG_POSTFIX "d")
-	
-#large address aware option setting
-IF(${MINGW})
-	SET(LARGEADDRESSAWARE "--large-address-aware")
-ELSE(${MINGW})
-	IF (WIN32)
-		SET(LARGEADDRESSAWARE "/LARGEADDRESSAWARE")
-	ELSE (WIN32)
-		SET(LARGEADDRESSAWARE " ")
-	ENDIF (WIN32)
-ENDIF (${MINGW})
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_CAPITALIZED)
+add_definitions(-DUNICODE)
 
-IF (WIN32)
-	SET(APP_OPT "WIN32")
-ELSE (WIN32)
-	IF (APPLE)
-		#SET(APP_OPT "MACOSX_BUNDLE")
-		SET(APP_OPT "EXCLUDE_FROM_ALL")
-	ELSE (APPLE)
-		SET(APP_OPT " ")
-	ENDIF (APPLE)
-ENDIF (WIN32)
+macro( config_project PROJNAME LIBNAME )
+include_directories( ${${LIBNAME}_INCLUDE_DIR} )
+target_link_libraries( ${PROJNAME} ${${LIBNAME}_LIBRARY} )
+endmacro()
 
+# large address aware option setting
+if( ${MINGW} )
+	set( LARGEADDRESSAWARE "--large-address-aware" )
+else( ${MINGW} )
+	if ( WIN32 )
+		set( LARGEADDRESSAWARE "/LARGEADDRESSAWARE" )
+	else ( WIN32 )
+		set( LARGEADDRESSAWARE " " )
+	endif ( WIN32 )
+endif( ${MINGW} )
 
-#OpenMP
-FIND_PACKAGE(OpenMP)
-IF(OPENMP_FOUND)
-	OPTION(WITH_OPENMP "Whether to use parallel processing capabilities of OPENMP. ON/OFF" ON)
-ENDIF(OPENMP_FOUND)
+if ( WIN32)
+	SET( APP_OPT "WIN32" )
+else ( WIN32 )
+	if ( APPLE )
+		#SET( APP_OPT "MACOSX_BUNDLE" )
+		SET( APP_OPT "EXCLUDE_FROM_ALL" )
+	else ( APPLE )
+		SET( APP_OPT " " )
+	endif ( APPLE )
+endif ( WIN32 )
 
-IF(OPENMP_FOUND AND WITH_OPENMP)
-	MESSAGE(STATUS "With OpenMP ")
-	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DMAX_OPENMP_NUM_THREADS=${PROCESSOR_COUNT} -DOPENMP_NUM_THREADS=${PROCESSOR_COUNT} ${OpenMP_CXX_FLAGS} -DOPENMP")
-	SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMAX_OPENMP_NUM_THREADS=${PROCESSOR_COUNT} -DOPENMP_NUM_THREADS=${PROCESSOR_COUNT} ${OpenMP_CXX_FLAGS} ${OpenMP_C_FLAGS} -DOPENMP")
-ELSE(OPENMP_FOUND AND WITH_OPENMP)
-	MESSAGE(STATUS "Without OpenMP")
-	#SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DMAX_OPENMP_NUM_THREADS=${PROCESSOR_COUNT} -DOPENMP_NUM_THREADS=${PROCESSOR_COUNT}")
-	#SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMAX_OPENMP_NUM_THREADS=${PROCESSOR_COUNT} -DOPENMP_NUM_THREADS=${PROCESSOR_COUNT}")
-	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DMAX_OPENMP_NUM_THREADS=1 -DOPENMP_NUM_THREADS=1")
-	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMAX_OPENMP_NUM_THREADS=1 -DOPENMP_NUM_THREADS=1")
-ENDIF(OPENMP_FOUND AND WITH_OPENMP)
+# OpenCV 
+find_package( OpenCV REQUIRED )
 
-# this command finds OpenCV libraries and sets all required variables
-FIND_PACKAGE(OpenCV REQUIRED)
+# Qt4 
+find_package( Qt4 REQUIRED )
 
-#set(Boost_USE_STATIC_LIBS ON)
-#set(Boost_USE_MULTITHREAD ON)
+# include them all
+include( ${QT_USE_FILE} )
+include_directories( ${OPENCV_INCLUDE_DIR} )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-#FIND_PACKAGE(Boost REQUIRED COMPONENTS filesystem regex)
-#FIND_PACKAGE(Boost REQUIRED)
-#INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+message( STATUS "OpenCV library status:" )
+message( STATUS "    version: ${OpenCV_VERSION}" )
+message( STATUS "    libraries: ${OpenCV_LIBS}" )
+message( STATUS "    include path: ${OpenCV_INCLUDE_DIRS}" )
 
-# Set the include directories
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src)
+include_directories( ${CMAKE_SOURCE_DIR} )
+include_directories( ${CMAKE_BINARY_DIR} )
+include_directories( ${CMAKE_SOURCE_DIR}/src/LoadImage )
+include_directories( ${CMAKE_BINARY_DIR}/src/LoadImage )
+include_directories( ${CMAKE_SOURCE_DIR}/src/Seeds )
+include_directories( ${CMAKE_BINARY_DIR}/src/Seeds )
+include_directories( ${CMAKE_SOURCE_DIR}/src/Utils )
+include_directories( ${CMAKE_BINARY_DIR}/src/Utils )
 
+link_directories( ${CMAKE_BINARY_DIR}/ )
 
-INCLUDE_DIRECTORIES(${OPENCV_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-
-LINK_DIRECTORIES(${CMAKE_BINARY_DIR})
-LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/bin)
-
-
-	
 # Setup output directories
-SET(LIBRARY_OUTPUT_PATH 
+set( LIBRARY_OUTPUT_PATH 
 	${PROJECT_BINARY_DIR}/bin
 	CACHE
 	PATH
-	"Single directory for all libraries")
+	"Single directory for all libraries" )
 	
-SET(EXECUTABLE_OUTPUT_PATH 
+set( EXECUTABLE_OUTPUT_PATH 
 	${PROJECT_BINARY_DIR}/bin
 	CACHE
 	PATH
-	"Single directory for all executables")
+	"Single directory for all executables" )
 
-# enable warnings
-#ADD_DEFINITIONS( -Wall )
-
-# we need this to be able to include headers produced by uic in our code
-# (CMAKE_BINARY_DIR holds a path to the build directory, while INCLUDE_DIRECTORIES() works just like INCLUDEPATH from qmake)
-INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR} )
-
+file( GLOB BT_RCS_RAW *.qrc )
 
 configure_file( 
     "${PROJECT_SOURCE_DIR}/Configs.h.in"
     "${PROJECT_BINARY_DIR}/Configs.h" )
 
-ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(examples)
-
+add_subdirectory( src )
+add_subdirectory( examples )
