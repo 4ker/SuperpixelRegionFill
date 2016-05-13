@@ -8,6 +8,10 @@
 #include <QPoint>
 #include <cv.h>
 
+class QAction;
+class QMenu;
+class QPoint;
+
 namespace Ui {
 class LoadImage;
 }
@@ -16,18 +20,33 @@ class ImageLabel : public QLabel
 {
     Q_OBJECT
 public:
-    explicit ImageLabel(QWidget *parent = 0){ }
+    explicit ImageLabel(QWidget *parent = 0);
     ~ImageLabel(){}
+
+    enum MODE {
+        LINETRACING,
+        SUPERPIXEL,
+    } mode;
 
     void loadImage( QString filePath_ );
     void showOrigin();
     void showContour();
     void showFill();
+    void showCarved();
+    void showRoute();
     void mousePressEvent( QMouseEvent *e );
+
+private slots:
+    void setToLinetracing() { mode = LINETRACING; }
+    void setToSuperpixel() { mode = SUPERPIXEL; }
+    void showMenu( QPoint pos );
 
 private:
     QString filePath;
-    cv::Mat origin, contour, fill, label;
+    cv::Mat origin, contour, fill, carved, route;
+    QMenu *menu;
+    QAction *superpixel;
+    QAction *linetracing;
 };
 
 class LoadImage : public QWidget
@@ -43,8 +62,10 @@ public:
 private slots:
     void on_pushButton_loadimg_clicked( );
     void on_pushButton_origin_clicked( );
+    void on_pushButton_carved_clicked( );
     void on_pushButton_contour_clicked( );
     void on_pushButton_fill_clicked( );
+    void on_pushButton_route_clicked( );
 
 private:
     Ui::LoadImage *ui;

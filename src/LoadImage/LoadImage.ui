@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>317</width>
+    <width>417</width>
     <height>109</height>
    </rect>
   </property>
@@ -43,9 +43,23 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButton_carved">
+       <property name="text">
+        <string>Carved</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButton_contour">
        <property name="text">
         <string>Contour</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_route">
+       <property name="text">
+        <string>Route</string>
        </property>
       </widget>
      </item>
